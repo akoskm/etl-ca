@@ -1,0 +1,1 @@
+type Row = Record<string, string>;
