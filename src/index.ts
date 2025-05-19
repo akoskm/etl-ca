@@ -8,26 +8,45 @@ function toJSON(data: Row[]): string {
 }
 
 function escapeHTML(str: string): string {
-  return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c] || c));
+  return str.replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c),
+  );
 }
 
 function toHTML(data: Row[]): string {
   if (data.length === 0) return '<table></table>';
   const headers = FIELD_NAMES;
-  const thead = `<thead><tr>${headers.map(h => `<th>${escapeHTML(h)}</th>`).join('')}</tr></thead>`;
-  const tbody = `<tbody>${data.map(row => `<tr>${headers.map(h => `<td>${escapeHTML(row[h] ?? '')}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  const thead = `<thead><tr>${headers
+    .map((h) => `<th>${escapeHTML(h)}</th>`)
+    .join('')}</tr></thead>`;
+  const tbody = `<tbody>${data
+    .map(
+      (row) =>
+        `<tr>${headers.map((h) => `<td>${escapeHTML(row[h] ?? '')}</td>`).join('')}</tr>`,
+    )
+    .join('')}</tbody>`;
   return `<table>${thead}${tbody}</table>`;
 }
 
 function main() {
-  const [,, inputFormat, outputFormat] = argv;
-  if (!inputFormat || !outputFormat || !['csv','prn'].includes(inputFormat) || !['json','html'].includes(outputFormat)) {
+  const [, , inputFormat, outputFormat] = argv;
+  if (
+    !inputFormat ||
+    !outputFormat ||
+    !['csv', 'prn'].includes(inputFormat) ||
+    !['json', 'html'].includes(outputFormat)
+  ) {
     stderr.write('Usage: your-solution <csv|prn> <json|html>\n');
     exit(1);
   }
   let input = '';
+  stdin.setEncoding('latin1');
   const rl = readline.createInterface({ input: stdin, terminal: false });
-  rl.on('line', (line: string) => { input += line + '\n'; });
+  rl.on('line', (line: string) => {
+    input += line + '\n';
+  });
   rl.on('close', () => {
     let data: Row[] = [];
     if (inputFormat === 'csv') {

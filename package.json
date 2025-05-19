@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "bun src/index.ts",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
