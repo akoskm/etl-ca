@@ -2,7 +2,9 @@
 import * as readline from 'readline';
 import { stdin, stdout, stderr, exit, argv } from 'process';
 import { parseCSV } from './parsers/csv';
-import { FIELD_NAMES } from './constants';
+import { parsePRN } from './parsers/prn';
+import { FIELD_NAMES, Row } from './constants';
+
 function toJSON(data: Row[]): string {
   return JSON.stringify(data, null, 2);
 }
@@ -51,8 +53,11 @@ function main() {
     let data: Row[] = [];
     if (inputFormat === 'csv') {
       data = parseCSV(input);
+    } else if (inputFormat === 'prn') {
+      data = parsePRN(input);
     } else {
-      throw new Error('PRN input is not supported yet');
+      stderr.write(`Unsupported input format: ${inputFormat}\n`);
+      exit(1);
     }
     if (outputFormat === 'json') {
       stdout.write(toJSON(data));
