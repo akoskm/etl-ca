@@ -3,34 +3,8 @@ import * as readline from 'readline';
 import { stdin, stdout, stderr, exit, argv } from 'process';
 import { parseCSV } from './parsers/csv';
 import { parsePRN } from './parsers/prn';
-import { FIELD_NAMES, Row } from './constants';
-
-function toJSON(data: Row[]): string {
-  return JSON.stringify(data, null, 2);
-}
-
-function escapeHTML(str: string): string {
-  return str.replace(
-    /[&<>"']/g,
-    (c) =>
-      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c),
-  );
-}
-
-function toHTML(data: Row[]): string {
-  if (data.length === 0) return '<table></table>';
-  const headers = FIELD_NAMES;
-  const thead = `<thead><tr>${headers
-    .map((h) => `<th>${escapeHTML(h)}</th>`)
-    .join('')}</tr></thead>`;
-  const tbody = `<tbody>${data
-    .map(
-      (row) =>
-        `<tr>${headers.map((h) => `<td>${escapeHTML(row[h] ?? '')}</td>`).join('')}</tr>`,
-    )
-    .join('')}</tbody>`;
-  return `<table>${thead}${tbody}</table>`;
-}
+import { Row } from './constants';
+import { toJSON, toHTML } from './formatters';
 
 function main() {
   const [, , inputFormat, outputFormat] = argv;
