@@ -2,12 +2,9 @@ import { describe, test, expect, beforeAll, afterAll } from 'vitest';
 import { exec } from 'child_process';
 import { promises as fs } from 'fs';
 import { promisify } from 'util';
-import { Row } from './constants'; // Corrected path
+import { Row } from './constants';
 
 const execAsync = promisify(exec);
-
-// Define a simple type for the records in the JSON output
-type JsonRecord = Row; // Using the Row type from constants
 
 describe('CLI', () => {
   const testHtmlOutputFile = 'test-output.html.txt';
@@ -15,7 +12,6 @@ describe('CLI', () => {
   const testPrnHtmlOutputFile = 'test-prn-html-output.txt';
   const testPrnJsonOutputFile = 'test-prn-json-output.txt';
 
-  // Files for diff tests as per README
   const readmeCsvHtmlFile = 'csv.html.txt';
   const readmePrnHtmlFile = 'prn.html.txt';
   const readmeCsvJsonFile = 'csv.json.txt';
@@ -83,7 +79,7 @@ describe('CLI', () => {
     const command = `cat ./Workbook2.csv | your-solution csv json > ${testCsvJsonOutputFile}`;
     await execAsync(command);
     const jsonOutput = await fs.readFile(testCsvJsonOutputFile, 'utf-8');
-    const data: JsonRecord[] = JSON.parse(jsonOutput);
+    const data: Row[] = JSON.parse(jsonOutput);
     // Assertions remain the same - expecting normalized output
     expect(Array.isArray(data)).toBe(true);
     expect(data.length).toBe(7);
@@ -91,9 +87,9 @@ describe('CLI', () => {
     expect(firstRecord).toHaveProperty('Name', 'Johnson, John');
     expect(firstRecord).toHaveProperty('Credit Limit', '10000');
     expect(firstRecord).toHaveProperty('Birthday', '01/01/1987');
-    const recordWithSpecialChar = data.find((r: JsonRecord) => r.Name === 'Smith, John');
+    const recordWithSpecialChar = data.find((r: Row) => r.Name === 'Smith, John');
     expect(recordWithSpecialChar?.Address).toContain('Børkestraße');
-    const recordWithDecimal = data.find((r: JsonRecord) => r.Name === 'Gibson, Mal');
+    const recordWithDecimal = data.find((r: Row) => r.Name === 'Gibson, Mal');
     expect(recordWithDecimal?.['Credit Limit']).toBe('54.5');
     // ... other common assertions from previous CSV to JSON test ...
     expect(firstRecord).toHaveProperty('Address', 'Voorstraat 32');
@@ -131,7 +127,7 @@ describe('CLI', () => {
     const command = `cat ./Workbook2.prn | your-solution prn json > ${testPrnJsonOutputFile}`;
     await execAsync(command);
     const jsonOutput = await fs.readFile(testPrnJsonOutputFile, 'utf-8');
-    const data: JsonRecord[] = JSON.parse(jsonOutput);
+    const data: Row[] = JSON.parse(jsonOutput);
     // Assertions should be IDENTICAL to CSV to JSON test
     expect(Array.isArray(data)).toBe(true);
     expect(data.length).toBe(7);
@@ -143,10 +139,10 @@ describe('CLI', () => {
     expect(firstRecord).toHaveProperty('Phone', '020 3849381');
     expect(firstRecord).toHaveProperty('Credit Limit', '10000');
     expect(firstRecord).toHaveProperty('Birthday', '01/01/1987');
-    const recordWithSpecialChar = data.find((r: JsonRecord) => r.Name === 'Smith, John');
+    const recordWithSpecialChar = data.find((r: Row) => r.Name === 'Smith, John');
     expect(recordWithSpecialChar).toBeDefined();
     expect(recordWithSpecialChar?.Address).toContain('Børkestraße');
-    const recordWithDecimal = data.find((r: JsonRecord) => r.Name === 'Gibson, Mal');
+    const recordWithDecimal = data.find((r: Row) => r.Name === 'Gibson, Mal');
     expect(recordWithDecimal?.['Credit Limit']).toBe('54.5');
   });
 
